@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: day-score
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/day_score
+    username: day_score
+    password: day_score
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
