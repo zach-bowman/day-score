@@ -30,7 +30,7 @@ curl http://localhost:8080/actuator/health
 ## Services
 
 ### Backend
-- Java 21, Spring Boot 3.3, Gradle
+- Java 21, Spring Boot 3, Gradle 8
 - PostgreSQL 16
 
 ```bash
