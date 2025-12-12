@@ -36,9 +36,13 @@ curl http://localhost:3000                  # Frontend
 
 ```bash
 cd backend
-./gradlew build     # Build
-./gradlew test      # Run tests
-./gradlew bootRun   # Start server
+
+./gradlew build          # Build
+./gradlew test           # Run tests
+./gradlew bootRun        # Start server
+
+./gradlew spotlessCheck  # Check formatting
+./gradlew spotlessApply  # Fix formatting
 ```
 
 ### Frontend
@@ -47,6 +51,7 @@ cd backend
 
 ```bash
 cd frontend
+
 npm run build       # Build
 npm run lint        # Lint
 npm run dev         # Start dev server
