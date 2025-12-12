@@ -1,4 +1,4 @@
-package com.dayscore;
+package com.dayscore.integration;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -12,15 +12,15 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class DayScoreApplicationTests {
+class DayScoreApplicationIT {
 
   @Autowired private MockMvc mockMvc;
 
   @Test
-  void testContextLoads() {}
+  void it_applicationStartup_contextLoads() {}
 
   @Test
-  void testHealthEndpointReturnsUp() throws Exception {
+  void it_actuatorHealthEndpoint_returnsUpStatus() throws Exception {
     mockMvc
         .perform(get("/actuator/health"))
         .andExpect(status().isOk())
