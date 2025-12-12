@@ -18,12 +18,12 @@ get_compose_cmd() {
 
 COMPOSE_CMD=$(get_compose_cmd)
 
-echo "Cleaning DayScore services (backend, frontend)..."
+echo "Cleaning DayScore..."
 echo ""
-echo "This will remove:"
-echo "  - All Docker containers and volumes (database data will be lost)"
-echo "  - Backend build artifacts"
-echo "  - Frontend build artifacts and node_modules"
+echo "This will remove all DayScore Docker containers, volumes, and images:"
+echo "  - Containers: day-score-db, day-score-backend, day-score-frontend"
+echo "  - Volumes: day-score_postgres_data (database data will be lost)"
+echo "  - Images: day-score-backend, day-score-frontend"
 echo ""
 read -p "Are you sure? (y/N) " -n 1 -r
 echo
@@ -34,29 +34,9 @@ fi
 
 echo ""
 
-# Kill any running processes on port 8080
-if lsof -ti:8080 &> /dev/null; then
-    echo "Stopping service: backend..."
-    lsof -ti:8080 | xargs kill -9 2>/dev/null || true
-fi
-
-# Kill any running processes on port 3000
-if lsof -ti:3000 &> /dev/null; then
-    echo "Stopping service: frontend..."
-    lsof -ti:3000 | xargs kill -9 2>/dev/null || true
-fi
-
-# Stop and remove Docker containers and volumes
-echo "Removing Docker containers and volumes..."
-$COMPOSE_CMD down -v 2>/dev/null || true
-
-# Clean Gradle build
-echo "Cleaning service: backend..."
-( cd backend && ./gradlew clean 2>/dev/null ) || true
-
-# Clean frontend
-echo "Cleaning service: frontend..."
-rm -rf frontend/.next frontend/node_modules 2>/dev/null || true
+# Stop and remove containers, volumes, and images
+echo "Removing Docker containers, volumes, and images..."
+$COMPOSE_CMD down -v --rmi local 2>/dev/null || true
 
 echo ""
 echo "Cleanup complete!"

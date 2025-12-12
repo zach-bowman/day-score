@@ -18,30 +18,17 @@ get_compose_cmd() {
 
 COMPOSE_CMD=$(get_compose_cmd)
 
-echo "Starting DayScore services (backend, frontend)..."
+echo "Starting DayScore services..."
 echo ""
 
-# Start PostgreSQL
-echo "Starting PostgreSQL..."
-$COMPOSE_CMD up -d db
-echo "  Waiting for PostgreSQL to be ready..."
-sleep 3
+$COMPOSE_CMD up -d --build
 
-# Start backend
-echo "Starting service: backend..."
-( cd backend && ./gradlew bootRun ) &
-BACKEND_PID=$!
-sleep 5
-
-# Start frontend
-echo "Starting service: frontend..."
 echo ""
-echo "Backend: http://localhost:8080"
+echo "Services starting. Use 'docker compose ps' to check status."
+echo ""
+echo "Backend:  http://localhost:8080"
 echo "Frontend: http://localhost:3000"
 echo ""
-echo "Press Ctrl+C to stop"
+echo "View logs: docker compose logs -f"
+echo "Stop:      ./scripts/stop.sh"
 echo ""
-( cd frontend && npm run dev )
-
-# Cleanup backend when frontend stops
-kill $BACKEND_PID 2>/dev/null || true

@@ -32,27 +32,11 @@ echo "Setting script permissions..."
 chmod +x scripts/*.sh
 echo "  Scripts are executable."
 
-# Verify Gradle wrapper
-echo "Checking Gradle wrapper..."
-if [ ! -f "backend/gradlew" ]; then
-    echo "  Generating Gradle wrapper..."
-    ( cd backend && gradle wrapper )
-fi
-chmod +x backend/gradlew
-echo "  Gradle wrapper is ready."
-
-# Install frontend dependencies
-echo "Installing frontend dependencies..."
-( cd frontend && npm install )
-echo "  Frontend dependencies installed."
-
 echo ""
 echo "Setup complete!"
 echo ""
 echo "Available commands:"
-echo "  ./scripts/build.sh  - Build services"
-echo "  ./scripts/test.sh   - Run tests"
-echo "  ./scripts/start.sh  - Start services"
-echo "  ./scripts/stop.sh   - Stop services"
-echo "  ./scripts/clean.sh  - Clean up everything"
+echo "  ./scripts/start.sh  - Build and start all services"
+echo "  ./scripts/stop.sh   - Stop all services"
+echo "  ./scripts/clean.sh  - Remove containers, volumes, and images"
 echo ""

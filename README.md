@@ -13,20 +13,20 @@ DayScore: A simple daily rating tool to track your entries and see your trends o
 
 Verify services are running:
 ```bash
-curl http://localhost:8080/actuator/health  # Backend
-curl http://localhost:3000                  # Frontend
+curl http://localhost:8080/actuator/health  # Backend → {"status":"UP"}
+curl http://localhost:3000                  # Frontend → HTML response
+
 ```
+Or visit http://localhost:3000 in your browser.
 
 ## Scripts
 
 | Script | Description |
 |--------|-------------|
 | `setup.sh` | First-time setup |
-| `build.sh` | Build services (backend, frontend) |
-| `test.sh` | Run tests |
-| `start.sh` | Start services (backend, frontend) |
-| `stop.sh` | Stop services (backend, frontend) |
-| `clean.sh` | Remove containers, volumes, and build artifacts |
+| `start.sh` | Build and start all services and database |
+| `stop.sh`  | Stop all services and database |
+| `clean.sh` | Remove containers, volumes, and images |
 
 ## Services
 

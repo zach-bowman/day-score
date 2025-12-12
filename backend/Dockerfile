@@ -1,13 +1,11 @@
-FROM eclipse-temurin:21-jdk AS build
+FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /app
 COPY . .
-RUN ./gradlew build -x test
+RUN ./gradlew build -x test --no-daemon
 
-FROM eclipse-temurin:21-jre
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+FROM eclipse-temurin:21-jre-alpine
+RUN apk add --no-cache curl
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
 EXPOSE 8080
-HEALTHCHECK --interval=60s --timeout=3s --start-period=30s --retries=3 \
-    CMD curl -f http://localhost:8080/actuator/health || exit 1
 ENTRYPOINT ["java", "-jar", "app.jar"]
