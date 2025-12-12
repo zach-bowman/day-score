@@ -5,7 +5,7 @@ out/
 *.jar
 *.war
 *.ear
-!gradle/wrapper/gradle-wrapper.jar
+!**/gradle/wrapper/gradle-wrapper.jar
 
 # === Frontend (Node.js / Next.js / TypeScript) ===
 node_modules/

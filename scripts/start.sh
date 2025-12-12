@@ -21,10 +21,10 @@ COMPOSE_CMD=$(get_compose_cmd)
 echo "Starting DayScore services..."
 echo ""
 
-$COMPOSE_CMD up -d --build
+$COMPOSE_CMD up -d --build --wait
 
 echo ""
-echo "Services starting. Use 'docker compose ps' to check status."
+echo "All services healthy."
 echo ""
 echo "Backend:  http://localhost:8080"
 echo "Frontend: http://localhost:3000"
