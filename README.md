@@ -53,6 +53,7 @@ cd backend
 cd frontend
 
 npm run build         # Build
+npm run test          # Run tests
 npm run lint          # Lint
 npm run dev           # Start dev server
 
