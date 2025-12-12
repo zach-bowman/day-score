@@ -41,6 +41,11 @@ fi
 chmod +x backend/gradlew
 echo "  Gradle wrapper is ready."
 
+# Install frontend dependencies
+echo "Installing frontend dependencies..."
+( cd frontend && npm install )
+echo "  Frontend dependencies installed."
+
 echo ""
 echo "Setup complete!"
 echo ""

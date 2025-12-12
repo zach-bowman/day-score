@@ -18,13 +18,19 @@ get_compose_cmd() {
 
 COMPOSE_CMD=$(get_compose_cmd)
 
-echo "Stopping DayScore services (backend)..."
+echo "Stopping DayScore services (backend, frontend)..."
 echo ""
 
 # Kill any running Gradle/Java processes on port 8080
 if lsof -ti:8080 &> /dev/null; then
     echo "Stopping service: backend..."
     lsof -ti:8080 | xargs kill -9 2>/dev/null || true
+fi
+
+# Kill any running Node processes on port 3000
+if lsof -ti:3000 &> /dev/null; then
+    echo "Stopping service: frontend..."
+    lsof -ti:3000 | xargs kill -9 2>/dev/null || true
 fi
 
 # Stop Docker containers (keeps volumes)

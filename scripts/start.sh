@@ -18,7 +18,7 @@ get_compose_cmd() {
 
 COMPOSE_CMD=$(get_compose_cmd)
 
-echo "Starting DayScore services (backend)..."
+echo "Starting DayScore services (backend, frontend)..."
 echo ""
 
 # Start PostgreSQL
@@ -29,7 +29,19 @@ sleep 3
 
 # Start backend
 echo "Starting service: backend..."
+( cd backend && ./gradlew bootRun ) &
+BACKEND_PID=$!
+sleep 5
+
+# Start frontend
+echo "Starting service: frontend..."
+echo ""
+echo "Backend: http://localhost:8080"
+echo "Frontend: http://localhost:3000"
 echo ""
 echo "Press Ctrl+C to stop"
 echo ""
-( cd backend && ./gradlew bootRun )
+( cd frontend && npm run dev )
+
+# Cleanup backend when frontend stops
+kill $BACKEND_PID 2>/dev/null || true
