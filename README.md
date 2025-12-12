@@ -52,9 +52,12 @@ cd backend
 ```bash
 cd frontend
 
-npm run build       # Build
-npm run lint        # Lint
-npm run dev         # Start dev server
+npm run build         # Build
+npm run lint          # Lint
+npm run dev           # Start dev server
+
+npm run format:check  # Check formatting
+npm run format        # Fix formatting
 ```
 
 ## Infrastructure
