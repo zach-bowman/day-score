@@ -110,7 +110,16 @@ type: description
 | `chore` | Maintenance |
 | `revert` | Reverts |
 
-**Breaking changes:** Add `!` after type (e.g., `feat!: remove old API`)
+**Breaking changes:** Add `!` after type or include `BREAKING CHANGE:` in the body
+
+```
+feat!: remove old API
+```
+```
+feat: remove old API
+
+BREAKING CHANGE: This removes the v1 endpoints
+```
 
 ## License
 MIT

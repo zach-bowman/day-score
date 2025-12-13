@@ -8,9 +8,8 @@ on:
 
 jobs:
   commitlint:
-    name: Validate PR Title & Commits
+    name: Validate PR Title & Commit Messages
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v6
         with:
@@ -25,13 +24,15 @@ jobs:
         working-directory: frontend
 
       - name: Validate PR title
+        if: github.event_name == 'pull_request'
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: echo "$PR_TITLE" | npx commitlint
         working-directory: frontend
 
-      - name: Validate commits
-        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
+      - name: Validate commits (push)
+        if: github.event_name == 'push'
+        run: npx commitlint --from ${{ github.event.before }} --to ${{ github.event.after }} --verbose
         working-directory: frontend
 
   backend:
