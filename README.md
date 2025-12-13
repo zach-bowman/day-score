@@ -121,5 +121,16 @@ feat: remove old API
 BREAKING CHANGE: This removes the v1 endpoints
 ```
 
+### Versioning
+
+Version tags (e.g., `v0.1.0`) are created automatically when commits are pushed to main and CI passes:
+
+| Commit Type | Version Bump |
+|-------------|--------------|
+| `fix`, `refactor`, `build`, `chore`, `revert` | Patch (v0.1.0 → v0.1.1) |
+| `feat` | Minor (v0.1.0 → v0.2.0) |
+| `feat!` or `BREAKING CHANGE:` | Major (v0.1.0 → v1.0.0) |
+| `docs`, `test` | No tag |
+
 ## License
 MIT
