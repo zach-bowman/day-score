@@ -14,6 +14,7 @@ get_compose_cmd() {
         echo "Docker Compose not found." >&2
         exit 1
     fi
+    return 0
 }
 
 COMPOSE_CMD=$(get_compose_cmd)

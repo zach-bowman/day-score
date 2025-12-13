@@ -25,7 +25,9 @@ jobs:
         working-directory: frontend
 
       - name: Validate PR title
-        run: echo "${{ github.event.pull_request.title }}" | npx commitlint
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: echo "$PR_TITLE" | npx commitlint
         working-directory: frontend
 
       - name: Validate commits
@@ -61,7 +63,7 @@ jobs:
 
       - name: Coverage report
         if: github.event_name == 'pull_request'
-        uses: madrapps/jacoco-report@v1.7.2
+        uses: madrapps/jacoco-report@50d3aff4548aa991e6753342d9ba291084e63848 # v1.7.2
         with:
           paths: backend/build/reports/jacoco/test/jacocoTestReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -104,7 +106,7 @@ jobs:
 
       - name: Coverage report
         if: github.event_name == 'pull_request'
-        uses: davelosert/vitest-coverage-report-action@v2
+        uses: davelosert/vitest-coverage-report-action@5b6122e3a819a3be7b27fc961b7faafb3bf00e4d # v2
         with:
           working-directory: frontend
           json-summary-path: coverage/coverage-summary.json
