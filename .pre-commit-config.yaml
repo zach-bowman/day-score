@@ -1,0 +1,36 @@
+repos:
+  - repo: local
+    hooks:
+      # Frontend: Prettier
+      - id: prettier
+        name: Prettier (Frontend)
+        entry: bash -c 'cd frontend && npx prettier --check .'
+        language: system
+        files: ^frontend/
+        pass_filenames: false
+        stages: [pre-commit]
+
+      # Frontend: ESLint
+      - id: eslint
+        name: ESLint (Frontend)
+        entry: bash -c 'cd frontend && npx eslint .'
+        language: system
+        files: ^frontend/.*\.[jt]sx?$
+        pass_filenames: false
+        stages: [pre-commit]
+
+      # Backend: Spotless
+      - id: spotless-check
+        name: Spotless (Backend)
+        entry: bash -c 'cd backend && ./gradlew spotlessCheck'
+        language: system
+        files: ^backend/.*\.java$
+        pass_filenames: false
+        stages: [pre-commit]
+
+      # Commit message validation
+      - id: commitlint
+        name: Commitlint
+        entry: bash -c 'cd frontend && npx --no -- commitlint --edit "$1"' --
+        language: system
+        stages: [commit-msg]

@@ -32,6 +32,25 @@ echo "Setting script permissions..."
 chmod +x scripts/*.sh
 echo "  Scripts are executable."
 
+# Install pre-commit
+echo "Checking pre-commit..."
+if ! command -v pre-commit &> /dev/null; then
+    if command -v brew &> /dev/null; then
+        brew install pre-commit
+    else
+        echo "  pre-commit not found. Please install:"
+        echo "    brew install pre-commit  (macOS)"
+        echo "    pip install pre-commit   (Linux)"
+        exit 1
+    fi
+fi
+echo "  pre-commit is ready."
+
+echo "Installing git hooks..."
+pre-commit install
+pre-commit install --hook-type commit-msg
+echo "  Git hooks installed."
+
 echo ""
 echo "Setup complete!"
 echo ""

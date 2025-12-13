@@ -64,5 +64,51 @@ npm run format        # Fix formatting
 ## Infrastructure
 - Docker
 
+## Contributing
+
+### Workflow
+
+1. Create a feature branch
+2. Make changes and commit (commits are validated locally)
+3. Open a PR with a conventional commit title
+4. CI runs all checks
+5. Squash and merge when approved
+
+### Code Quality
+
+| Check | Local | CI |
+|-------|-------|-----|
+| Prettier (frontend) | pre-commit | ✓ |
+| ESLint (frontend) | pre-commit | ✓ |
+| Spotless (backend) | pre-commit | ✓ |
+| Tests | manual | ✓ |
+| Build | manual | ✓ |
+| Docker health checks | manual | ✓ |
+| Commit message | pre-commit | ✓ |
+| PR title | — | ✓ |
+
+### Commit Messages
+
+Follow [Conventional Commits](https://conventionalcommits.org). PR titles must match this format since we squash merge.
+
+```
+type: description
+```
+
+**Allowed types:**
+
+| Type | Description |
+|------|-------------|
+| `feat` | New feature |
+| `fix` | Bug fix |
+| `docs` | Documentation |
+| `refactor` | Code improvement |
+| `test` | Test changes |
+| `build` | Build/CI changes |
+| `chore` | Maintenance |
+| `revert` | Reverts |
+
+**Breaking changes:** Add `!` after type (e.g., `feat!: remove old API`)
+
 ## License
 MIT
