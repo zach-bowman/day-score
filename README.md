@@ -1,5 +1,7 @@
 # day-score
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=zach-bowman_day-score&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=zach-bowman_day-score)
+
 > **Status:** In Development
 
 DayScore: A simple daily rating tool to track your entries and see your trends over time.
