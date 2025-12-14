@@ -113,6 +113,49 @@ jobs:
           json-summary-path: coverage/coverage-summary.json
           json-final-path: coverage/coverage-final.json
 
+  sonar:
+    name: SonarCloud Analysis
+    needs: [backend, frontend]
+    if: ${{ !cancelled() && needs.backend.result == 'success' && needs.frontend.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v5
+
+      - name: Build backend (for class files)
+        run: ./gradlew build -x test
+        working-directory: backend
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Run frontend tests with coverage
+        run: npm test -- --coverage
+        working-directory: frontend
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: SonarCloud link
+        run: echo "View results at https://sonarcloud.io/summary/new_code?id=zach-bowman_day-score"
+
   docker:
     name: Docker Integration
     needs: [backend, frontend]

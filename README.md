@@ -88,6 +88,7 @@ npm run format        # Fix formatting
 | Tests | manual | ✓ |
 | Build | manual | ✓ |
 | Docker health checks | manual | ✓ |
+| SonarCloud analysis | — | ✓ |
 | Commit message | pre-commit | ✓ |
 | PR title | — | ✓ |
 
