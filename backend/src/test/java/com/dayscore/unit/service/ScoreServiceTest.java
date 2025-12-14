@@ -16,8 +16,6 @@ class ScoreServiceTest {
     scoreService = new ScoreService();
   }
 
-  // isValidScore tests
-
   @Test
   void test_isValidScore_validScores_returnsTrue() {
     assertTrue(scoreService.isValidScore(1));
