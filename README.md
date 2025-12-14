@@ -1,6 +1,8 @@
 # day-score
 
+[![CI](https://github.com/zach-bowman/day-score/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/zach-bowman/day-score/actions/workflows/ci.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=zach-bowman_day-score&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=zach-bowman_day-score)
+[![GitHub tag](https://img.shields.io/github/v/tag/zach-bowman/day-score?label=version)](https://github.com/zach-bowman/day-score/tags)
 
 > **Status:** In Development
 
