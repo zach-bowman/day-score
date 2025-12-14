@@ -48,6 +48,37 @@ export default function Home() {
     }
   };
 
+  const renderFormSection = () => {
+    if (editingEntry) {
+      return (
+        <div className="mb-8">
+          <h2 className="mb-4 text-xl font-semibold">Edit Entry</h2>
+          <EntryForm
+            entry={editingEntry}
+            onSubmit={handleUpdate}
+            onCancel={() => setEditingEntry(null)}
+          />
+        </div>
+      );
+    }
+    if (showForm) {
+      return (
+        <div className="mb-8">
+          <h2 className="mb-4 text-xl font-semibold">New Entry</h2>
+          <EntryForm onSubmit={handleCreate} onCancel={() => setShowForm(false)} />
+        </div>
+      );
+    }
+    return (
+      <button
+        onClick={() => setShowForm(true)}
+        className="mb-8 cursor-pointer rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+      >
+        Add Entry
+      </button>
+    );
+  };
+
   if (loading) {
     return <main className="flex min-h-screen items-center justify-center">Loading...</main>;
   }
@@ -58,28 +89,7 @@ export default function Home() {
 
       {error && <p className="mb-4 text-red-400">{error}</p>}
 
-      {editingEntry ? (
-        <div className="mb-8">
-          <h2 className="mb-4 text-xl font-semibold">Edit Entry</h2>
-          <EntryForm
-            entry={editingEntry}
-            onSubmit={handleUpdate}
-            onCancel={() => setEditingEntry(null)}
-          />
-        </div>
-      ) : showForm ? (
-        <div className="mb-8">
-          <h2 className="mb-4 text-xl font-semibold">New Entry</h2>
-          <EntryForm onSubmit={handleCreate} onCancel={() => setShowForm(false)} />
-        </div>
-      ) : (
-        <button
-          onClick={() => setShowForm(true)}
-          className="mb-8 cursor-pointer rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-        >
-          Add Entry
-        </button>
-      )}
+      {renderFormSection()}
 
       <h2 className="mb-4 text-xl font-semibold">Entries</h2>
       <EntryList entries={entries} onEdit={setEditingEntry} onDelete={handleDelete} />

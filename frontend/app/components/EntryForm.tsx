@@ -4,12 +4,12 @@ import { useState } from "react";
 import { Entry, CreateEntryRequest, UpdateEntryRequest } from "../types/entry";
 
 interface EntryFormProps {
-  entry?: Entry;
-  onSubmit: (data: CreateEntryRequest | UpdateEntryRequest) => Promise<void>;
-  onCancel?: () => void;
+  readonly entry?: Entry;
+  readonly onSubmit: (data: CreateEntryRequest | UpdateEntryRequest) => Promise<void>;
+  readonly onCancel?: () => void;
 }
 
-export default function EntryForm({ entry, onSubmit, onCancel }: EntryFormProps) {
+export default function EntryForm({ entry, onSubmit, onCancel }: Readonly<EntryFormProps>) {
   const [date, setDate] = useState(entry?.date ?? new Date().toISOString().split("T")[0]);
   const [score, setScore] = useState<number | "">(entry?.score ?? "");
   const [note, setNote] = useState(entry?.note ?? "");
@@ -17,6 +17,11 @@ export default function EntryForm({ entry, onSubmit, onCancel }: EntryFormProps)
   const [error, setError] = useState<string | null>(null);
 
   const isEditMode = !!entry;
+
+  const getButtonText = () => {
+    if (loading) return "Saving...";
+    return isEditMode ? "Update" : "Create";
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,7 +91,7 @@ export default function EntryForm({ entry, onSubmit, onCancel }: EntryFormProps)
           disabled={loading}
           className="cursor-pointer rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {loading ? "Saving..." : isEditMode ? "Update" : "Create"}
+          {getButtonText()}
         </button>
         {onCancel && (
           <button

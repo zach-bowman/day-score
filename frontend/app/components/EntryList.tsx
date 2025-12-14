@@ -3,12 +3,12 @@
 import { Entry } from "../types/entry";
 
 interface EntryListProps {
-  entries: Entry[];
-  onEdit: (entry: Entry) => void;
-  onDelete: (id: number) => void;
+  readonly entries: Entry[];
+  readonly onEdit: (entry: Entry) => void;
+  readonly onDelete: (id: number) => void;
 }
 
-export default function EntryList({ entries, onEdit, onDelete }: EntryListProps) {
+export default function EntryList({ entries, onEdit, onDelete }: Readonly<EntryListProps>) {
   if (entries.length === 0) {
     return <p className="text-gray-400">No entries yet. Create your first entry!</p>;
   }

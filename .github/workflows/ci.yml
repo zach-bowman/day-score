@@ -173,8 +173,8 @@ jobs:
 
   tag:
     name: Auto Tag
-    needs: [docker]
-    if: github.ref == 'refs/heads/main' && needs.docker.result == 'success'
+    needs: [docker, sonar]
+    if: github.ref == 'refs/heads/main' && needs.docker.result == 'success' && needs.sonar.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
