@@ -8,9 +8,8 @@ on:
 
 jobs:
   commitlint:
-    name: Validate PR Title & Commits
+    name: Validate PR Title & Commit Messages
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v6
         with:
@@ -25,15 +24,21 @@ jobs:
         working-directory: frontend
 
       - name: Validate PR title
-        run: echo "${{ github.event.pull_request.title }}" | npx commitlint
+        if: github.event_name == 'pull_request'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: echo "$PR_TITLE" | npx commitlint
         working-directory: frontend
 
-      - name: Validate commits
-        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
+      - name: Validate commits (push)
+        if: github.event_name == 'push'
+        run: npx commitlint --from ${{ github.event.before }} --to ${{ github.event.after }} --verbose
         working-directory: frontend
 
   backend:
     name: Backend Build & Test
+    needs: [commitlint]
+    if: ${{ !cancelled() && (needs.commitlint.result == 'success' || needs.commitlint.result == 'skipped') }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -57,8 +62,21 @@ jobs:
       - name: Build
         run: ./gradlew build -x test
 
+      - name: Coverage report
+        if: github.event_name == 'pull_request'
+        uses: madrapps/jacoco-report@50d3aff4548aa991e6753342d9ba291084e63848 # v1.7.2
+        with:
+          paths: backend/build/reports/jacoco/test/jacocoTestReport.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: Backend Coverage
+          update-comment: true
+          min-coverage-overall: 0
+          min-coverage-changed-files: 0
+
   frontend:
     name: Frontend Build & Test
+    needs: [commitlint]
+    if: ${{ !cancelled() && (needs.commitlint.result == 'success' || needs.commitlint.result == 'skipped') }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -81,29 +99,25 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Run tests
-        run: npm test
+      - name: Run tests with coverage
+        run: npm test -- --coverage
 
       - name: Build
         run: npm run build
 
-  docker:
-    name: Docker Integration
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
+      - name: Coverage report
+        if: github.event_name == 'pull_request'
+        uses: davelosert/vitest-coverage-report-action@5b6122e3a819a3be7b27fc961b7faafb3bf00e4d # v2
+        with:
+          working-directory: frontend
+          json-summary-path: coverage/coverage-summary.json
+          json-final-path: coverage/coverage-final.json
 
-      - name: Build and verify services
-        run: docker compose up -d --build --wait
-
-      - name: Teardown
-        if: always()
-        run: docker compose down -v
-
-  sonarcloud:
+  sonar:
     name: SonarCloud Analysis
+    needs: [backend, frontend]
+    if: ${{ !cancelled() && needs.backend.result == 'success' && needs.frontend.result == 'success' }}
     runs-on: ubuntu-latest
-    needs: [backend, frontend, docker]
     steps:
       - uses: actions/checkout@v6
         with:
@@ -116,7 +130,7 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v5
 
-      - name: Build backend
+      - name: Build backend (for class files)
         run: ./gradlew build -x test
         working-directory: backend
 
@@ -130,17 +144,81 @@ jobs:
         run: npm ci
         working-directory: frontend
 
-      - name: Build frontend
-        run: npm run build
+      - name: Run frontend tests with coverage
+        run: npm test -- --coverage
         working-directory: frontend
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: SonarCloud link
+        run: echo "View results at https://sonarcloud.io/summary/new_code?id=zach-bowman_day-score"
+
+  docker:
+    name: Docker Integration
+    needs: [backend, frontend]
+    if: ${{ !cancelled() && needs.backend.result == 'success' && needs.frontend.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Build and verify services
+        run: docker compose up -d --build --wait
+
+      - name: Teardown
+        if: always()
+        run: docker compose down -v
+
+  tag:
+    name: Auto Tag
+    needs: [docker, sonar]
+    if: github.ref == 'refs/heads/main' && needs.docker.result == 'success' && needs.sonar.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
         with:
-          args: >
-            -Dsonar.organization=zach-bowman
-            -Dsonar.projectKey=zach-bowman_day-score
-            -Dsonar.sources=backend/src/main,frontend/app
-            -Dsonar.java.binaries=backend/build/classes
+          fetch-depth: 0
+
+      - name: Get latest tag
+        id: latest
+        run: |
+          tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Calculate next version
+        id: next
+        env:
+          LATEST_TAG: ${{ steps.latest.outputs.tag }}
+        run: |
+          version=${LATEST_TAG#v}
+          IFS='.' read -r major minor patch <<< "$version"
+
+          # Get all commit messages since last tag (handles batch pushes)
+          msgs=$(git log "${LATEST_TAG}"..HEAD --pretty=%B 2>/dev/null || git log --pretty=%B)
+
+          # Determine highest bump across all commits
+          if echo "$msgs" | grep -qE '(^|\n)[a-zA-Z]+!:' || echo "$msgs" | grep -q 'BREAKING CHANGE:'; then
+            major=$((major + 1)); minor=0; patch=0
+          elif echo "$msgs" | grep -qE '(^|\n)feat(\(.+\))?:'; then
+            minor=$((minor + 1)); patch=0
+          elif echo "$msgs" | grep -qE '(^|\n)(fix|refactor|build|chore|revert)(\(.+\))?:'; then
+            patch=$((patch + 1))
+          else
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "version=v${major}.${minor}.${patch}" >> "$GITHUB_OUTPUT"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
+      - name: Create tag
+        if: steps.next.outputs.skip != 'true'
+        env:
+          NEW_TAG: ${{ steps.next.outputs.version }}
+        run: |
+          git tag "$NEW_TAG"
+          git push origin "$NEW_TAG"

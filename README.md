@@ -1,5 +1,9 @@
 # day-score
 
+[![CI](https://github.com/zach-bowman/day-score/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/zach-bowman/day-score/actions/workflows/ci.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=zach-bowman_day-score&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=zach-bowman_day-score)
+[![GitHub tag](https://img.shields.io/github/v/tag/zach-bowman/day-score?label=version)](https://github.com/zach-bowman/day-score/tags)
+
 > **Status:** In Development
 
 DayScore: A simple daily rating tool to track your entries and see your trends over time.
@@ -84,6 +88,7 @@ npm run format        # Fix formatting
 | Tests | manual | ✓ |
 | Build | manual | ✓ |
 | Docker health checks | manual | ✓ |
+| SonarCloud analysis | — | ✓ |
 | Commit message | pre-commit | ✓ |
 | PR title | — | ✓ |
 
@@ -108,7 +113,27 @@ type: description
 | `chore` | Maintenance |
 | `revert` | Reverts |
 
-**Breaking changes:** Add `!` after type (e.g., `feat!: remove old API`)
+**Breaking changes:** Add `!` after type or include `BREAKING CHANGE:` in the body
+
+```
+feat!: remove old API
+```
+```
+feat: remove old API
+
+BREAKING CHANGE: This removes the v1 endpoints
+```
+
+### Versioning
+
+Version tags (e.g., `v0.1.0`) are created automatically when commits are pushed to main and CI passes:
+
+| Commit Type | Version Bump |
+|-------------|--------------|
+| `fix`, `refactor`, `build`, `chore`, `revert` | Patch (v0.1.0 → v0.1.1) |
+| `feat` | Minor (v0.1.0 → v0.2.0) |
+| `feat!` or `BREAKING CHANGE:` | Major (v0.1.0 → v1.0.0) |
+| `docs`, `test` | No tag |
 
 ## License
 MIT
