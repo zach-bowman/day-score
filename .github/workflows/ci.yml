@@ -52,7 +52,7 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - uses: gradle/actions/setup-gradle@v5
+      - uses: gradle/actions/setup-gradle@v6
 
       - name: Check formatting
         run: ./gradlew spotlessCheck
@@ -108,7 +108,7 @@ jobs:
 
       - name: Coverage report
         if: github.event_name == 'pull_request'
-        uses: davelosert/vitest-coverage-report-action@15b5b41bb7d36796d89f4bf482b09529c53f3446 # v2
+        uses: davelosert/vitest-coverage-report-action@bd52af59d9cd548ea7cd405044d2458042e6d888 # v2
         with:
           working-directory: frontend
           json-summary-path: coverage/coverage-summary.json
@@ -129,7 +129,7 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - uses: gradle/actions/setup-gradle@v5
+      - uses: gradle/actions/setup-gradle@v6
 
       - name: Build backend (for class files)
         run: ./gradlew build -x test
